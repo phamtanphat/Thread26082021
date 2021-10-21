@@ -17,21 +17,58 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Object objectA = new Object();
+        Object objectB = new Object();
+
         // Thread phụ (Background thread)
-        Thread thread = new Thread(new Runnable() {
+        Thread threadA = new Thread(new Runnable() {
             @Override
             public void run() {
-                Log.d("BBB",Thread.currentThread().getName());
-                for (int i = 0; i < 200; i++) {
+               synchronized (objectA){
+                   try {
+                       Log.d("BBB","Thread 1 đang chạy object A");
+                       Thread.sleep(100);
+                   } catch (InterruptedException e) {
+                       e.printStackTrace();
+                   }
+                   synchronized (objectB){
+                       Log.d("BBB","Thread 1 đang chạy object B");
+                   }
+               }
+            }
+        });
+
+        Thread threadB = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                synchronized (objectB){
                     try {
+                        Log.d("BBB","Thread 2 đang chạy object B");
                         Thread.sleep(100);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+                    synchronized (objectA){
+                        Log.d("BBB","Thread 2 đang chạy object A");
+                    }
                 }
-                Toast.makeText(MainActivity.this, "sadasd", Toast.LENGTH_SHORT).show();
             }
         });
-        thread.start();
+
+        threadA.start();
+        threadB.start();
+
+        new CountDownTimer(2000,2000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+            }
+
+            @Override
+            public void onFinish() {
+                Log.d("BBB",threadA.getState().toString() + " " + threadA.isAlive());
+                Log.d("BBB",threadB.getState().toString()+ " " + threadB.isAlive());
+            }
+        }.start();
     }
 }
