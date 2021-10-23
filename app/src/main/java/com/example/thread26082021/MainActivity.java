@@ -21,37 +21,48 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        handler = new Handler(Looper.getMainLooper()){
-            @Override
-            public void handleMessage(@NonNull Message msg) {
-                switch (msg.what){
-                    case 1 :
-                        Log.d("BBB",msg.obj.toString());
-                        break;
-                    case 2 :
-                        Toast.makeText(MainActivity.this, "Finish", Toast.LENGTH_SHORT).show();
-                        break;
-                }
-                super.handleMessage(msg);
-            }
-        };
+//        handler = new Handler(Looper.getMainLooper()){
+//            @Override
+//            public void handleMessage(@NonNull Message msg) {
+//                switch (msg.what){
+//                    case 1 :
+//                        Log.d("BBB",msg.obj.toString());
+//                        break;
+//                    case 2 :
+//                        Toast.makeText(MainActivity.this, "Finish", Toast.LENGTH_SHORT).show();
+//                        break;
+//                }
+//                super.handleMessage(msg);
+//            }
+//        };
+//
+//        Thread thread = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//
+//                for (int i = 1; i <= 100; i++) {
+//                    Message message = new Message();
+//                    message.what = 1;
+//                    message.obj = i;
+//                    handler.sendMessage(message);
+//                }
+//                Message message = new Message();
+//                message.what = 2;
+//                handler.sendMessage(message);
+//            }
+//        });
+//        thread.start();
 
-        Thread thread = new Thread(new Runnable() {
+        MyThread thread = new MyThread();
+        thread.start();
+
+        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
 
-                for (int i = 1; i <= 100; i++) {
-                    Message message = new Message();
-                    message.what = 1;
-                    message.obj = i;
-                    handler.sendMessage(message);
-                }
-                Message message = new Message();
-                message.what = 2;
-                handler.sendMessage(message);
+                Log.d("BBB",thread.getState().name());
             }
-        });
-        thread.start();
+        },2000);
 
     }
 
