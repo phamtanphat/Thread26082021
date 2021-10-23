@@ -1,10 +1,13 @@
 package com.example.thread26082021;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -12,95 +15,43 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-    int a, b, c;
-    MyFlag myFlag;
-
+    Handler handler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        a = b = c = 0;
-        myFlag = new MyFlag(1);
-        // 1 - Thread A thực thi logic
-        // 2 - Thread B thực thi logic
-        // 3 - Thread C thực thi logic
+        handler = new Handler(Looper.getMainLooper()){
+            @Override
+            public void handleMessage(@NonNull Message msg) {
+                switch (msg.what){
+                    case 1 :
+                        Log.d("BBB",msg.obj.toString());
+                        break;
+                    case 2 :
+                        Toast.makeText(MainActivity.this, "Finish", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+                super.handleMessage(msg);
+            }
+        };
 
-        Thread threadA = new Thread(new Runnable() {
+        Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                synchronized (myFlag) {
-                    for (int i = 1; i <= 50; ) {
-                        if (myFlag.index == 1) {
-                            a = i;
-                            Log.d("BBB", "A : " + a);
-                            myFlag.index = 2;
-                            myFlag.notifyAll();
-                            i++;
-                        } else {
-                            try {
-                                myFlag.wait();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
+
+                for (int i = 1; i <= 100; i++) {
+                    Message message = new Message();
+                    message.what = 1;
+                    message.obj = i;
+                    handler.sendMessage(message);
                 }
+                Message message = new Message();
+                message.what = 2;
+                handler.sendMessage(message);
             }
         });
-
-        Thread threadB = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                synchronized (myFlag) {
-                    for (int i = 1; i <= 50; ) {
-                        if (myFlag.index == 2) {
-                            b = i;
-                            Log.d("BBB", "B : " + b);
-                            myFlag.index = 3;
-                            myFlag.notifyAll();
-                            i++;
-                        } else {
-                            try {
-                                myFlag.wait();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                }
-            }
-        });
-
-        Thread threadC = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                synchronized (myFlag) {
-                    for (int i = 1; i <= 50; ) {
-                        if (myFlag.index == 3) {
-                            c = a + b;
-                            Log.d("BBB", "C : " + c);
-                            myFlag.index = 1;
-                            myFlag.notifyAll();
-                            i++;
-                        }else{
-                            try {
-                                myFlag.wait();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                }
-            }
-        });
-
-        threadA.start();
-        threadB.start();
-        threadC.start();
-
-
-
+        thread.start();
 
     }
 
