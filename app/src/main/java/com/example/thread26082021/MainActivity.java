@@ -11,45 +11,48 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
+    int a , b ,c;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        a = b = c = 0;
+
         Thread threadA = new Thread(new Runnable() {
             @Override
             public void run() {
-               handlePrint("A");
+                for (int i = 1; i <= 50 ; i++) {
+                    a = i;
+                    Log.d("BBB","A : " + a);
+                }
             }
         });
 
         Thread threadB = new Thread(new Runnable() {
             @Override
             public void run() {
-                handlePrint("B");
+                for (int i = 1; i <= 50 ; i++) {
+                    b = i;
+                    Log.d("BBB","B : " + b);
+                }
+            }
+        });
+
+        Thread threadC = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 1; i <= 50 ; i++) {
+                    c = a + b;
+                    Log.d("BBB","C : " + c);
+                }
             }
         });
 
         threadA.start();
         threadB.start();
+        threadC.start();
 
-        new CountDownTimer(10, 10) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-
-            }
-
-            @Override
-            public void onFinish() {
-                Log.d("BBB","Thread A " + threadA.getState().toString());
-                Log.d("BBB","Thread B " + threadB.getState().toString());
-            }
-        }.start();
     }
 
-    private synchronized void handlePrint(String name){
-        for (int i = 0; i < 1000; i++) {
-            Log.d("BBB",name + " " + i);
-        }
-    }
 }
