@@ -30,12 +30,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 synchronized (myFlag) {
-                    for (int i = 1; i <= 10000; i++) {
+                    for (int i = 1; i <= 50; ) {
                         if (myFlag.index == 1) {
                             a = i;
                             Log.d("BBB", "A : " + a);
                             myFlag.index = 2;
                             myFlag.notifyAll();
+                            i++;
                         } else {
                             try {
                                 myFlag.wait();
@@ -52,12 +53,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 synchronized (myFlag) {
-                    for (int i = 1; i <= 50; i++) {
+                    for (int i = 1; i <= 50; ) {
                         if (myFlag.index == 2) {
                             b = i;
                             Log.d("BBB", "B : " + b);
                             myFlag.index = 3;
                             myFlag.notifyAll();
+                            i++;
                         } else {
                             try {
                                 myFlag.wait();
@@ -74,12 +76,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 synchronized (myFlag) {
-                    for (int i = 1; i <= 50; i++) {
+                    for (int i = 1; i <= 50; ) {
                         if (myFlag.index == 3) {
                             c = a + b;
                             Log.d("BBB", "C : " + c);
                             myFlag.index = 1;
                             myFlag.notifyAll();
+                            i++;
                         }else{
                             try {
                                 myFlag.wait();
